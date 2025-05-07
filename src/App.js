@@ -7,10 +7,10 @@ function BodyWrapper ({ isDarkMode }) {
   return null
 }
 
+// console.log('working')
 export default function App () {
   const [todoList, setTodoList] = useState(() => {
     const storedTodos = JSON.parse(localStorage.getItem('todos'))
-    console.log(storedTodos)
     return storedTodos || []
   })
 

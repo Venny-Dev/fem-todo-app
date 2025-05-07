@@ -44,7 +44,7 @@
 }
 body {
   font-family: "Josefin", sans-serif;
-  background-color: hsl(235, 21%, 11%);
+  /* background-color: hsl(235, 21%, 11%); */
   font-size: 18px;
   display: flex;
   flex-direction: column;
