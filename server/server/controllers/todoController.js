@@ -16,6 +16,8 @@ exports.getAllTodos = async (req, res) => {
       filterObj.completed = false
     } else if (filter === 'completed') {
       filterObj.completed = true
+    } else {
+      filterObj = {}
     }
 
     const todos = await Todo.find(filterObj).sort({ createdAt: -1 })
