@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { toast } from 'react-toastify'
+import Loader from './Loader'
+import { useCreateTodo } from '../reactQueryHooks/useTodos'
 
 function CreateNewTodo ({
   onAddNewTodo,
@@ -8,9 +11,12 @@ function CreateNewTodo ({
 }) {
   const [todo, setTodo] = useState('')
 
+  // useCreateTodo()
+
   function handleSubmit (e) {
     e.preventDefault()
 
+    if (!todo) return toast.error('Please add a todo')
     const newTodo = {
       todo,
       id: todoList.length + 1,
@@ -56,6 +62,10 @@ function CreateNewTodo ({
             value={todo}
             onChange={e => setTodo(e.target.value)}
           />
+
+          {/*  <div className='loader-container'>
+            <Loader />
+          </div> */}
         </form>
       </div>
     </div>

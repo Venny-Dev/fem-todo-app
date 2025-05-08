@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react'
-import Summary from './Summary'
-import CreateNewTodo from './CreateNewTodo'
-import TodoList from './TodoList'
-import Todo from './Todo'
-
-function BodyWrapper ({ isDarkMode }) {
-  document.body.style.backgroundColor = isDarkMode
-    ? 'hsl(235, 21%, 11%)'
-    : '#ffffff'
-  return null
-}
+import Summary from './components/Summary'
+import CreateNewTodo from './components/CreateNewTodo'
+import TodoList from './components/TodoList'
+import Todo from './components/Todo'
+import { ToastContainer } from 'react-toastify'
+import BodyWrapper from './components/BodyWrapper'
+import { useTodos } from './reactQueryHooks/useTodos'
 
 export default function App () {
   const [todoList, setTodoList] = useState(() => {
@@ -18,6 +14,9 @@ export default function App () {
   })
 
   const [filterStatus, setFilterStatus] = useState('all')
+
+  const { todos, isGettingTodos } = useTodos()
+  console.log(todos)
 
   const [isDarkMode, setIsDarkMode] = useState(true)
 
@@ -104,6 +103,8 @@ export default function App () {
           </TodoList>
         </div>
       </div>
+
+      <ToastContainer hideProgressBar={true} autoClose={2000} />
     </div>
   )
 }
