@@ -9,8 +9,22 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
-app.use(cors({ origin: 'http://localhost:3000' }))
-app.use(cors({ origin: 'https://venny-todo-app.vercel.app' }))
+const allowed = ['http://localhost:3000', 'https://venny-todo-app.vercel.app']
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // allow requests with no origin (e.g. mobile apps, curl)
+      if (!origin) return callback(null, true)
+      if (allowed.includes(origin)) {
+        return callback(null, true)
+      }
+      callback(new Error(`Origin ${origin} not allowed by CORS`))
+    },
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  })
+)
 connectDB()
 app.use(express.json())
 app.use('/api/todos', todoRoutes)

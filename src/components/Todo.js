@@ -47,7 +47,11 @@ function Todo ({ todo, isDarkMode }) {
       id: todo._id
     }
     // console.log(data)
-    updateTodo(data)
+    updateTodo(data, {
+      onError: () => {
+        setIsChecked(todo.completed)
+      }
+    })
     setIsChecked(!isChecked)
   }
 
