@@ -2,14 +2,19 @@ import { toast } from 'react-toastify'
 import { API_BASE_URL } from '../constants'
 
 export async function getAllTodos (filter) {
-  const params = new URLSearchParams()
+  //   const params = new URLSearchParams()
 
-  if (filter) {
-    params.append('filter', filter)
-  }
+  //   if (filter) {
+  //     params.append('filter', filter)
+  //   }
+  let res
 
   try {
-    const res = await fetch(`${API_BASE_URL}/${params.toString()}`)
+    if (filter) {
+      res = await fetch(`${API_BASE_URL}?filter=${filter}`)
+    } else {
+      res = await fetch(`${API_BASE_URL}`)
+    }
     const data = await res.json()
     return data
   } catch (err) {

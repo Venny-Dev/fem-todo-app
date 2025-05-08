@@ -9,10 +9,10 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
+app.use(cors({ origin: 'http://localhost:3000' }))
 connectDB()
 app.use(express.json())
 app.use('/api/todos', todoRoutes)
-app.use(cors({ origin: 'http://localhost:3000' }))
 
 if (require.main === module) {
   const port = process.env.PORT || 3000

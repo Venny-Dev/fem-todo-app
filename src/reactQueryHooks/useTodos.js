@@ -13,7 +13,7 @@ export function useTodos () {
     queryFn: getAllTodos
   })
 
-  return { todos, isGettingTodos }
+  return { todos: todos || [], isGettingTodos }
 }
 
 export function useCreateTodo () {
