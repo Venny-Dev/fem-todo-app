@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
-import { useCreateTodo, useDeleteCompleted } from '../reactQueryHooks/useTodos'
+import { useCreateTodo } from '../reactQueryHooks/useTodos'
 import Loader from './Loader'
 
 function CreateNewTodo ({ isDarkMode, onHandleDarkMode }) {

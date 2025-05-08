@@ -10,6 +10,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(cors({ origin: 'http://localhost:3000' }))
+app.use(cors({ origin: 'https://venny-todo-app.vercel.app' }))
 connectDB()
 app.use(express.json())
 app.use('/api/todos', todoRoutes)
