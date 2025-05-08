@@ -2,14 +2,12 @@ import { toast } from 'react-toastify'
 import { API_BASE_URL } from '../constants'
 
 export async function getAllTodos (filter) {
-  //   const params = new URLSearchParams()
-
-  //   if (filter) {
-  //     params.append('filter', filter)
-  //   }
   let res
 
   try {
+    if (!navigator.onLine) {
+      throw new Error('No Internet connection')
+    }
     if (filter) {
       res = await fetch(`${API_BASE_URL}?filter=${filter}`)
     } else {
@@ -18,8 +16,8 @@ export async function getAllTodos (filter) {
     const data = await res.json()
     return data
   } catch (err) {
-    console.log(err)
     toast.error('Something went wrong')
+    throw new Error('Something went wrong')
   }
 }
 
@@ -36,18 +34,26 @@ export async function createTodo (newTodo) {
   } catch (err) {
     console.log(err)
     toast.error('Something went wrong')
+    throw new Error('Something went wrong')
   }
 }
 
 export async function deleteTodo (id) {
+  //   console.log(id)
   try {
     const res = await fetch(`${API_BASE_URL}/${id}`, {
       method: 'DELETE'
     })
-    await res.json()
+
+    if (!res.ok) {
+      throw new Error('Something went wrong')
+    } else {
+      toast.success('Todo deleted successfully')
+    }
   } catch (err) {
     console.log(err)
     toast.error('Something went wrong')
+    throw new Error('Something went wrong')
   }
 }
 
@@ -65,6 +71,7 @@ export async function updateTodo ({ id, updatedTodo }) {
   } catch (err) {
     console.log(err)
     toast.error('Something went wrong')
+    throw new Error('Something went wrong')
   }
 }
 
@@ -74,9 +81,11 @@ export async function deleteCompleted () {
       method: 'DELETE'
     })
     const data = await res.json()
+    toast.success(`${data.deleted} todo(s) deleted successfully`)
     return data
   } catch (err) {
     console.log(err)
     toast.error('Something went wrong')
+    throw new Error('Something went wrong')
   }
 }

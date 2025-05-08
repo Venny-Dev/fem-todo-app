@@ -1,44 +1,127 @@
-function Todo ({ todo, onHandleIsCompleted, onHandleDelete, isDarkMode }) {
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useDeleteTodo, useUpdateTodo } from '../reactQueryHooks/useTodos'
+
+function Todo ({ todo, isDarkMode }) {
+  const [editingId, setEditingId] = useState('')
+  const inputRefs = useRef({})
+  const [editingValue, setEditingValue] = useState(todo.name)
+
+  const { updateTodo } = useUpdateTodo()
+  const { deleteTodo, isDeletingTodo } = useDeleteTodo()
+
+  const [isChecked, setIsChecked] = useState(todo.completed)
+
+  const enterEditMode = useCallback(id => {
+    setEditingId(id)
+    setTimeout(() => {
+      inputRefs.current[id]?.focus()
+    }, 0)
+  }, [])
+
+  useEffect(() => {
+    if (editingId === null) return
+
+    function handleClickOutside (e) {
+      const inputEl = inputRefs.current[editingId]
+      if (!inputEl || !inputEl.contains(e.target)) {
+        const data = {
+          updatedTodo: { name: editingValue },
+          id: todo._id
+        }
+        if (editingValue !== todo.name) {
+          updateTodo(data)
+        }
+        setEditingId(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [editingId, todo.name, editingValue, updateTodo, todo._id])
+
   function handleCompleted () {
-    onHandleIsCompleted(todo.id)
+    const data = {
+      updatedTodo: { completed: !todo.completed },
+      id: todo._id
+    }
+    // console.log(data)
+    updateTodo(data)
+    setIsChecked(!isChecked)
   }
 
   function handleDelete () {
-    onHandleDelete(todo.id)
+    deleteTodo(todo._id)
   }
 
-  // const dotenv = require('dotenv')
-  // dotenv.config({ path: './config.env' })
+  function handleEdit () {
+    if (editingId === todo._id) {
+      setEditingId(null)
+    } else {
+      enterEditMode(todo._id)
+    }
+  }
 
-  // // const app = require('./app')
+  const handleKeyDown = e => {
+    if (e.key === 'Enter') {
+      const data = {
+        updatedTodo: { name: editingValue },
+        id: todo._id
+      }
+      updateTodo(data)
+      setEditingId(null)
+    }
+  }
 
-  // const port = process.env.PORT || 3000
-
-  // app.listen(port, () => {
-  // console.log(`App running on port ${port}...`)
-  // })
+  // For some reasons this does not run, so i save in the useEffect above
+  // function handleEditSave () {
+  //   console.log(editingValue, todo._id)
+  //   setEditingId(null)
+  //   // setEditingValue(todo.name)
+  // }
 
   return (
     <li
-      className={`${todo.completed ? 'completed' : ''} ${
+      className={`${isChecked || isDeletingTodo ? 'completed' : ''} ${
         isDarkMode
           ? 'dark-mode-input dark-mode-list'
           : 'light-mode  light-mode-list'
       }`}
     >
       <span>
-        <Button todo={todo} onClick={() => handleCompleted()} />
+        <Button isChecked={isChecked} onClick={handleCompleted} />
       </span>
-      <span className={`${todo.completed ? 'completed-text' : ''} `}>
-        {todo.todo}
-      </span>
+      {editingId !== todo._id && (
+        <span className={`${isChecked ? 'completed-text' : ''} `}>
+          {editingValue || todo.name}
+        </span>
+      )}
+      {editingId === todo._id && (
+        <input
+          value={editingValue}
+          ref={el => (inputRefs.current[todo.id] = el)}
+          autoFocus
+          onKeyDown={handleKeyDown}
+          onChange={e => setEditingValue(e.target.value)}
+          className={`${
+            isDarkMode ? 'editing-input-dark' : 'editing-input-light'
+          }`}
+        />
+      )}
       <span className='last-el'>
         <button className='last-el-btn' onClick={() => handleDelete()}>
-          <img
-            src={process.env.PUBLIC_URL + 'images/icon-cross.svg'}
-            alt='cross'
-          />
+          <img src='/images/icon-cross.svg' alt='cross' />
         </button>
+
+        {editingId !== todo._id && (
+          <button className='last-el-btn' onClick={handleEdit}>
+            <img src='/images/icon-edit.svg' alt='cross' />
+          </button>
+        )}
+        {editingId === todo._id && (
+          <button className='last-el-btn'>Save</button>
+        )}
       </span>
     </li>
   )
@@ -46,18 +129,13 @@ function Todo ({ todo, onHandleIsCompleted, onHandleDelete, isDarkMode }) {
 
 export default Todo
 
-function Button ({ todo, onClick }) {
+function Button ({ isChecked, onClick }) {
   return (
     <button
-      className={`form-container-btn ${todo.completed ? 'btn-complete' : ''}`}
+      className={`form-container-btn ${isChecked ? 'btn-complete' : ''}`}
       onClick={onClick}
     >
-      {todo.completed && (
-        <img
-          src={process.env.PUBLIC_URL + 'images/icon-check.svg'}
-          alt='complete'
-        />
-      )}
+      {isChecked && <img src='/images/icon-check.svg' alt='complete' />}
     </button>
   )
 }

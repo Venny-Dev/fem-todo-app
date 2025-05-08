@@ -42,6 +42,26 @@
 .background {
   background-color: white;
 }
+.editing-input-dark {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  font-weight: 650;
+  width: 100%;
+  color: hsl(234, 39%, 85%);
+  /* border: 1px solid navy; */
+}
+
+.editing-input-light {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  font-weight: 650;
+  width: 100%;
+  color: hsl(235, 19%, 35%);
+}
 body {
   font-family: "Josefin", sans-serif;
   /* background-color: hsl(235, 21%, 11%); */
@@ -151,6 +171,10 @@ ul {
   border-radius: 6px;
   max-width: 620px;
   box-shadow: 2px 15px 6px 0 rgba(0, 0, 0, 0.214);
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
 }
 .list-container > p {
   padding: 15px 20px 15px 20px;
@@ -168,6 +192,7 @@ li {
   height: 70px;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
+  width: 100%;
 }
 .completed {
   text-decoration: line-through;
@@ -182,12 +207,17 @@ li > span {
 li .last-el {
   margin-left: auto;
   margin-right: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-direction: row-reverse;
 }
 
 .last-el-btn {
   background-color: transparent;
   border: none;
   cursor: pointer;
+  color: hsl(234, 11%, 52%);
 }
 
 .summary {
@@ -196,6 +226,7 @@ li .last-el {
   justify-content: space-between;
   padding: 25px 20px 25px 20px;
   color: hsl(234, 11%, 52%);
+  width: 100%;
 }
 .summary-btn {
   background-color: transparent;
@@ -258,10 +289,14 @@ li .last-el {
   color: hsl(220, 98%, 61%);
 }
 
-.loader-container {
+.loader-container-create {
   position: absolute;
   top: -7px;
   right: 40px;
+}
+
+.loader-container {
+  margin: 10px 0px;
 }
 
 @media screen and (min-width: 620px) {

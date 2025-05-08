@@ -1,30 +1,25 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { useCreateTodo, useDeleteCompleted } from '../reactQueryHooks/useTodos'
 import Loader from './Loader'
-import { useCreateTodo } from '../reactQueryHooks/useTodos'
 
-function CreateNewTodo ({
-  onAddNewTodo,
-  todoList,
-  isDarkMode,
-  onHandleDarkMode
-}) {
+function CreateNewTodo ({ isDarkMode, onHandleDarkMode }) {
   const [todo, setTodo] = useState('')
-
-  // useCreateTodo()
+  const { createTodo, isCreatingTodo } = useCreateTodo()
 
   function handleSubmit (e) {
     e.preventDefault()
 
     if (!todo) return toast.error('Please add a todo')
     const newTodo = {
-      todo,
-      id: todoList.length + 1,
+      name: todo,
       completed: false
     }
-    onAddNewTodo(newTodo)
-
-    setTodo('')
+    createTodo(newTodo, {
+      onSuccess: () => {
+        setTodo('')
+      }
+    })
   }
 
   return (
@@ -60,12 +55,15 @@ function CreateNewTodo ({
             }`}
             placeholder='Create a new todo...'
             value={todo}
+            disabled={isCreatingTodo}
             onChange={e => setTodo(e.target.value)}
           />
 
-          {/*  <div className='loader-container'>
-            <Loader />
-          </div> */}
+          {isCreatingTodo && (
+            <div className='loader-container-create'>
+              <Loader />
+            </div>
+          )}
         </form>
       </div>
     </div>

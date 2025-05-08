@@ -1,10 +1,7 @@
-function Summary ({
-  filterTodo,
-  onHandleClearCompleted,
-  onSetFilter,
-  filterStatus,
-  isDarkMode
-}) {
+import { useDeleteCompleted } from '../reactQueryHooks/useTodos'
+
+function Summary ({ filterTodo, onSetFilter, filterStatus, isDarkMode }) {
+  const { deleteCompleted } = useDeleteCompleted()
   function handleFilter (filter) {
     onSetFilter(filter)
   }
@@ -12,7 +9,7 @@ function Summary ({
   return (
     <footer className='summary'>
       <p>
-        {filterTodo().length} item{filterTodo().length > 1 && 's'} left
+        {filterTodo?.length} item{filterTodo?.length > 1 && 's'} left
       </p>
 
       <div className='summary-largescreen'>
@@ -42,7 +39,7 @@ function Summary ({
         </button>
       </div>
 
-      <button className='summary-btn' onClick={() => onHandleClearCompleted()}>
+      <button className='summary-btn' onClick={deleteCompleted}>
         Clear Completed
       </button>
     </footer>

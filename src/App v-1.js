@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Summary from './components/Summary'
 import CreateNewTodo from './components/CreateNewTodo'
 import TodoList from './components/TodoList'
@@ -8,59 +8,16 @@ import BodyWrapper from './components/BodyWrapper'
 import { useTodos } from './reactQueryHooks/useTodos'
 
 export default function App () {
-  const [todoList, setTodoList] = useState(() => {
-    const storedTodos = JSON.parse(localStorage.getItem('todos'))
-    return storedTodos || []
-  })
-
   const [filterStatus, setFilterStatus] = useState('all')
 
-  const { todos, isGettingTodos } = useTodos()
-  console.log(todos)
+  const { todos, isGettingTodos } = useTodos(filterStatus)
 
   const [isDarkMode, setIsDarkMode] = useState(true)
 
   function handleDarkmode () {
     setIsDarkMode(isDarkMode => !isDarkMode)
   }
-
-  function handleIsCompleted (id) {
-    const updatedTodo = todoList.map(curTodo => {
-      return curTodo.id === id
-        ? { ...curTodo, completed: !curTodo.completed }
-        : curTodo
-    })
-    setTodoList(updatedTodo)
-  }
-
-  function handleDelete (id) {
-    setTodoList(todoList => todoList.filter(todo => todo.id !== id))
-  }
-
-  function addNewTodo (newTodo) {
-    setTodoList(todoList => [...todoList, newTodo])
-  }
-
-  function handleClearCompleted () {
-    setTodoList(todoList => todoList.filter(todo => !todo.completed))
-  }
-
-  function filterTodo () {
-    if (filterStatus === 'active') {
-      return todoList.filter(todo => !todo.completed)
-    } else if (filterStatus === 'completed') {
-      return todoList.filter(todo => todo.completed)
-    }
-
-    return todoList
-  }
-
-  useEffect(
-    function () {
-      localStorage.setItem('todos', JSON.stringify(todoList))
-    },
-    [todoList]
-  )
+  // console.log(todos)
 
   return (
     <div
@@ -71,31 +28,23 @@ export default function App () {
       <BodyWrapper isDarkMode={isDarkMode} />
       <div className='container'>
         <CreateNewTodo
-          onAddNewTodo={addNewTodo}
-          todoList={todoList}
           isDarkMode={isDarkMode}
           onHandleDarkMode={handleDarkmode}
         />
         <div className='todo'>
           <TodoList
-            filterTodo={filterTodo}
-            onHandleFilterTodos={filterTodo}
+            filterTodo={todos?.data?.todos}
             onSetFilter={setFilterStatus}
             filterStatus={filterStatus}
             isDarkMode={isDarkMode}
+            isLoading={isGettingTodos}
           >
-            {filterTodo().map(todo => (
-              <Todo
-                todo={todo}
-                key={todo.id}
-                onHandleIsCompleted={handleIsCompleted}
-                onHandleDelete={handleDelete}
-                isDarkMode={isDarkMode}
-              />
-            ))}
+            {!isGettingTodos &&
+              todos?.data?.todos.map(todo => (
+                <Todo todo={todo} key={todo._id} isDarkMode={isDarkMode} />
+              ))}
             <Summary
-              filterTodo={filterTodo}
-              onHandleClearCompleted={handleClearCompleted}
+              filterTodo={todos?.data?.todos}
               onSetFilter={setFilterStatus}
               filterStatus={filterStatus}
               isDarkMode={isDarkMode}
